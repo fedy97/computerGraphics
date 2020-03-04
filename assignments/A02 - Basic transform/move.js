@@ -1,46 +1,94 @@
 function move() {
-	// Translate of +2 on the x axis, and -1 on the y axis
-	var T1 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
-			   
-	// Rotate of 45 degrees on the x axis
-	var R1 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
-			   
-	// Make the object 2 times smaller
-	var S1 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
-			   
-	// Make the object 2 times longer on the z axis, and half on the other axis
-	var S2 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
+    // Translate of +2 on the x axis, and -1 on the y axis
+    let T1 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+    T1 = translate(T1,2.0,-1.0,0.0);
+    // Rotate of 45 degrees on the x axis
+    let R1 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	R1 = rotateX(R1, 45);
+    // Make the object 2 times smaller
+    let S1 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	S1 = scale(S1, 0.5, 0.5, 0.5);
+    // Make the object 2 times longer on the z axis, and half on the other axis
+    let S2 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	S2 = scale(S2, 0.5, 0.5, 2);
+    // Mirror over the z axis
+    let S3 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	S3 = mirrorAxis(S3, 'z');
+    // Flatten over the z axis
+    let S4 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	S4 = flatten(S4, 'z');
+    // Make a shear along the Y axis, with a factor of 1 along the x axis
+    let H1 = [1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0];
+	H1 = shear(H1, 'y', 1.0, 0.0);
+    return [T1, R1, S1, S2, S3, S4, H1];
+}
 
-	// Mirror over the z axis
-	var S3 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
-			   
-	// Flatten over the z axis
-	var S4 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
+function translate(matrix, x, y, z) {
+	matrix[3] = x;
+	matrix[7] = y;
+	matrix[11] = z;
+	return matrix;
+}
 
-	// Make a shear along the Y axis, with a factor of 1 along the x axis
-	var H1 =  [1.0,		0.0,		0.0,		0.0,
-			   0.0,		1.0,		0.0,		0.0,
-			   0.0,		0.0,		1.0,		0.0,
-			   0.0,		0.0,		0.0,		1.0];
+function rotateX(matrix, degree) {
+	matrix[5] = Math.cos(degree);
+	matrix[6] = -Math.sin(degree);
+	matrix[9] = Math.sin(degree);
+	matrix[10] = Math.cos(degree);
+	return matrix;
+}
 
-	return [T1, R1, S1, S2, S3, S4, H1];
+function scale(matrix, sx, sy, sz) {
+	matrix[0] = sx;
+	matrix[5] = sy;
+	matrix[10] = sz;
+	return matrix;
+}
+
+function mirrorAxis(matrix, axis) {
+	if (axis === 'z') {
+		matrix[0] = -1.0;
+		matrix[5] = -1.0;
+	}
+	return matrix;
+	//TODO finish the function
+}
+
+function flatten(matrix, axis) {
+	if (axis === 'z') {
+		matrix[10] = 0.0;
+	}
+	//TODO
+	return matrix;
+}
+
+function shear(matrix, axis, h1, h2) {
+	if (axis === 'y') {
+		matrix[1] = h1;
+		matrix[9] = h2;
+	}
+	//TODO
+	return matrix;
 }
 
