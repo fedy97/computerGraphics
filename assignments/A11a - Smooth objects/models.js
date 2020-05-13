@@ -78,6 +78,56 @@ function buildGeometry() {
     var norm4 = [];
     ///// Creates vertices
     var vert4 = [];
+    var ind4 = [];
+    var circles = 10.0;
+    var ray = 1.0;
+    var curr_ray = ray;
+    var k = 0;
+    var curr_height = -1.0;
+    for (var j = 0; j <= circles; j++) {
+        for (i = 0; i < 36; i++) {
+            var normm1 = [Math.sin(i * 10.0 / 180.0 * Math.PI), 1.0 / 2.0, Math.cos(i * 10.0 / 180.0 * Math.PI)];
+            var abbs = Math.sqrt(Math.pow(normm1[0], 2) + Math.pow(normm1[1], 2) + Math.pow(normm1[2], 2));
+            norm4[k] = [normm1[0] / abbs, normm1[1] / abbs, normm1[2] / abbs];
+            vert4[k] = [curr_ray * Math.sin(i * 10.0 / 180.0 * Math.PI), curr_height, curr_ray * Math.cos(i * 10.0 / 180.0 * Math.PI)]
+            k++;
+        }
+        curr_ray = curr_ray - (ray / circles);
+        curr_height = curr_height + (2.0/circles);
+    }
+    console.log(k);
+    vert4[k] = [0.0, -1.0, 0.0];
+    norm4[k] = [0.0, -1.0, 0.0];
+    k++;
+    //base verso il giu
+    for (i = 73; i < 109; i++) {
+        norm4[k] = [0.0, -1.0, 0.0];
+        vert4[k] = [Math.sin((i - 73) * 10.0 / 180.0 * Math.PI), -1.0, Math.cos((i - 73) * 10.0 / 180.0 * Math.PI)];
+        k++;
+    }
+
+    for (j = 1; j <= circles; j++) {
+        for (i = 1; i <= 36; i++) {
+            /*var a = (tubi + 1) * j + i - 1;
+            var b = (tubi + 1) * (j - 1) + i - 1;
+            var c = (tubi + 1) * (j - 1) + i;
+            var d = (tubi + 1) * j + i;*/
+            var a = 36 * j + i - 1; //36 - 37 --- 71
+            var b = 36 * (j - 1) + i - 1; //0 - 1 --- 35
+            var c = 36 * (j - 1) + i; //1 - 2 --- 36
+            var d = 36 * j + i; //37 - 38 --- 72
+            if (i === 36) {
+                c = c - 36;
+                d = d - 36;
+            }
+            ind4.push(b, c, a);
+            ind4.push(c, d, a);
+        }
+    }
+    for (i = 0; i < 35; i++)
+        ind4.push(i % 36 + 398, i + 397, 396);
+    ind4.push(397,432,396);
+    /*
     for (i = 0; i < 36; i++) {
         var normm1 = [Math.sin(i * 10.0 / 180.0 * Math.PI), 1.0 / 2.0, Math.cos(i * 10.0 / 180.0 * Math.PI)];
         var abbs = Math.sqrt(Math.pow(normm1[0], 2) + Math.pow(normm1[1], 2) + Math.pow(normm1[2], 2));
@@ -119,6 +169,7 @@ function buildGeometry() {
     ind4[j++] = 73;
     ind4[j++] = 108;
     ind4[j++] = 36;
+    */
     var color4 = [1.0, 1.0, 0.0];
     addMesh(vert4, norm4, ind4, color4);
 
@@ -179,11 +230,13 @@ function buildGeometry() {
     let r = 0.4;
     let arc = Math.PI * 2;
     k = 0;
-    for (j = 0; j <= 36; j++) {
-        for (i = 0; i <= 27; i++) {
+    let radial = 6;
+    let tubi = 4;
+    for (j = 0; j <= radial; j++) {
+        for (i = 0; i <= tubi; i++) {
 
-            var u = i / 27 * arc;
-            var v = j / 36 * arc;
+            var u = i / tubi * arc;
+            var v = j / radial * arc;
             let x = (R + r * Math.cos(v)) * Math.cos(u);
             let y = (R + r * Math.cos(v)) * Math.sin(u);
             let z = r * Math.sin(v);
@@ -193,21 +246,24 @@ function buildGeometry() {
             var normal = [x - center[0], y - center[1], z - center[2]];
             var abss = normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2];
             var sqrtabs = Math.sqrt(abss);
+            //console.log("normal: " + normal + ", center: " + center);
             normal[0] = normal[0] / sqrtabs;
             normal[1] = normal[1] / sqrtabs;
             normal[2] = normal[2] / sqrtabs;
             norm6[k] = [normal[0], normal[1], normal[2]];
+            //console.log("vertex: " + k + ", coords: [" + x + "," + y + "," + z + "]");
+            //console.log("normalized: " + normal);
             k++;
         }
 
     }
-    for (j = 1; j <= 36; j++) {
-        for (i = 1; i <= 27; i++) {
+    for (j = 1; j <= radial; j++) {
+        for (i = 1; i <= tubi; i++) {
 
-            var a = (27 + 1) * j + i - 1;
-            var b = (27 + 1) * (j - 1) + i - 1;
-            var c = (27 + 1) * (j - 1) + i;
-            var d = (27 + 1) * j + i;
+            var a = (tubi + 1) * j + i - 1;
+            var b = (tubi + 1) * (j - 1) + i - 1;
+            var c = (tubi + 1) * (j - 1) + i;
+            var d = (tubi + 1) * j + i;
 
             ind6.push(a, b, d);
             ind6.push(b, c, d);

@@ -134,14 +134,24 @@ function buildGeometry() {
     let R = 1;
     let r = 0.4;
     let arc = Math.PI * 2;
+    let radial = 27;
+    let tubi = 36;
     k = 0;
-    for (j = 0; j <= 36; j++) {
-        for (i = 0; i <= 27; i++) {
-            var u = i / 27 * arc;
-            var v = j / 36 * arc;
+    for (j = 0; j <= radial; j++) {
+        for (i = 0; i <= tubi; i++) {
+            //0 = [1.4, 0, 0]
+            //1 = [0, 1.4, 0]
+            //2 = [-1.4, 0, 0]
+            //3 = [0, -1.4, 0] with radial = 6, tubi = 4, R = 1, r = 0.4
+            //4 = [1.4, 0, 0]
+            //5 = [1.2, 0, 0.34]
+            //6 = [0, 1.2, 0.34]
+            var u = i / tubi * arc;
+            var v = j / radial * arc;
             let x = (R + r * Math.cos(v)) * Math.cos(u);
             let y = (R + r * Math.cos(v)) * Math.sin(u);
             let z = r * Math.sin(v);
+            //console.log("vertex: " + k + ", coords: [" + x +","+ y + "," + z + "]");
             vert4[k] = [x, y, z];
             k++;
         }
@@ -149,14 +159,14 @@ function buildGeometry() {
     }
     k = 0;
 	var ind4 = [];
-    for (j = 1; j <= 36; j++) {
-        for (i = 1; i <= 27; i++) {
-
-            var a = (27 + 1) * j + i - 1;
-            var b = (27 + 1) * (j - 1) + i - 1;
-            var c = (27 + 1) * (j - 1) + i;
-            var d = (27 + 1) * j + i;
-
+    for (j = 1; j <= radial; j++) {
+        for (i = 1; i <= tubi; i++) {
+            //a = 2, b = 0, c = 1, d = 3
+            var a = (tubi + 1) * j + i - 1;
+            var b = (tubi + 1) * (j - 1) + i - 1;
+            var c = (tubi + 1) * (j - 1) + i;
+            var d = (tubi + 1) * j + i;
+            //console.log(a + ", " + b + ", " + c + ", " + d);
 			ind4.push(a,b,d);
             ind4.push(b, c, d);
         }

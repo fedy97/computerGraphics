@@ -103,6 +103,7 @@ function main() {
 
   function drawScene() {
     // Bind the attribute/buffer set we want.
+      // so we do not write again lines from 84 to 98, it does that every time we call this
     gl.bindVertexArray(vao);
 
     // Compute the matrix
@@ -119,13 +120,15 @@ function main() {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0 );
-    
+    //putting here this, means that at every frame the cube will re render even if I do not press anything
+      //its like a loop, here is not necessary because the image will change only if we press something
+      //but for animations is foundamental, because the cube needs to move at every frame even if we do not do anything
     window.requestAnimationFrame(drawScene);
   }
 
 function keyFunction(e){
  
-      if (e.keyCode == 37) {  // Left arrow
+      if (e.keyCode == 37) {  // Left arrow is 37, link in slides
         cx-=delta;
       }
       if (e.keyCode == 39) {  // Right arrow
@@ -156,6 +159,10 @@ function keyFunction(e){
       if (e.keyCode == 83) {  // s
         elevation-=delta*10.0;
       }
+
+      // I can also put it here
+    // If i put here, the image will re render only when I press a key(camera will move then)
+    // window.requestAnimationFrame(drawScene);
       
 }
 

@@ -135,7 +135,7 @@ function main() {
   // Tell it to use our program (pair of shaders)
   gl.useProgram(program);
   //must be defined after the useProgram()
-  var color = [0.2,0.6,0.3,1.0];
+  var color = [0.9,0.6,0.3,1.0];
   var colorLocation = gl.getUniformLocation(program, "u_color");
   //feed glsl the color we want for th triangle
   //4 components for the color, if it was position there were 3 components
