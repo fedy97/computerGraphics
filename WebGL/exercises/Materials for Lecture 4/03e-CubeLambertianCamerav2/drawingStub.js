@@ -4,10 +4,11 @@ in vec3 inPosition;
 in vec3 inNormal;
 out vec3 fsNormal;
 
-uniform mat4 matrix;
+uniform mat4 matrix; 
+uniform mat4 nMatrix;     //matrix to transform normals
 
 void main() {
-  fsNormal =  inNormal; 
+  fsNormal = mat3(nMatrix) * inNormal; 
   gl_Position = matrix * vec4(inPosition, 1.0);
 }`;
 
@@ -20,19 +21,22 @@ out vec4 outColor;
 
 uniform vec3 mDiffColor;
 uniform vec3 lightDirection; 
-uniform vec3 lightColor;   
+uniform vec3 lightColor; 
+uniform mat4 lightDirMatrix;       
 
 void main() {
 
   vec3 nNormal = normalize(fsNormal);
-  vec3 lDir = (lightDirection); 
-  vec3 lambertColor = mDiffColor * lightColor * dot(-lDir,nNormal);
+  vec3 lDir = lightDirection; 
+  vec3 lambertColor = mDiffColor * lightColor * max(-dot(lDir,nNormal), 0.0);
   outColor = vec4(clamp(lambertColor, 0.0, 1.0), 1.0);
 }`;
 
 function main() {
 
   var program = null;
+  var cubeNormalMatrix;
+
   var cubeWorldMatrix = new Array();    //One world matric for each cube...
 
   //define directional light
@@ -82,6 +86,8 @@ function main() {
   var materialDiffColorHandle = gl.getUniformLocation(program, 'mDiffColor');
   var lightDirectionHandle = gl.getUniformLocation(program, 'lightDirection');
   var lightColorHandle = gl.getUniformLocation(program, 'lightColor');
+  var normalMatrixPositionHandle = gl.getUniformLocation(program, 'nMatrix');
+  var lightDirMatrixPositionHandle = gl.getUniformLocation(program, 'lightDirMatrix');
 
   var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width/gl.canvas.height, 0.1, 100.0);
   
@@ -135,19 +141,19 @@ function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     var viewMatrix = utils.MakeView(3.0, 3.0, 2.5, -45.0, -40.0);
+
     for(i = 0; i < 4; i++){
       var worldViewMatrix = utils.multiplyMatrices(viewMatrix, cubeWorldMatrix[i]);
       var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);
-      //inverse transpose here changes for each object because it uses the world matrix of each cube
-      //NEW
-      var lightDirMatrix = utils.sub3x3from4x4(utils.transposeMatrix(cubeWorldMatrix[i]));
-      var directionalLightTransformed = utils.normalizeVec3(utils.multiplyMatrix3Vector3(lightDirMatrix, directionalLight));
+      cubeNormalMatrix = utils.invertMatrix(utils.transposeMatrix(worldViewMatrix));
 
       gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
+      
+      gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(cubeNormalMatrix));
 
       gl.uniform3fv(materialDiffColorHandle, cubeMaterialColor);
       gl.uniform3fv(lightColorHandle,  directionalLightColor);
-      gl.uniform3fv(lightDirectionHandle,  directionalLightTransformed);
+      gl.uniform3fv(lightDirectionHandle,  directionalLight);
 
       gl.bindVertexArray(vao);
       gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0 );
