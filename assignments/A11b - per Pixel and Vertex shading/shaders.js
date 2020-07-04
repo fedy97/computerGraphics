@@ -154,10 +154,26 @@ var V3 = `#version 300 es
 layout(location = POSITION_LOCATION) in vec3 in_pos;
 layout(location = NORMAL_LOCATION) in vec3 in_norm;
 
+// uniforms
+
+
+uniform vec4 ambientLightColor;
+
+uniform vec4 ambientMatColor;
+uniform vec4 emitColor;
 uniform mat4 pMatrix;
+
+out vec4 finalColor;
+out vec3 fs_pos;
 out vec3 fs_norm;
 
 void main() {
+	
+	// ambient
+	vec4 ambient = ambientLightColor * ambientMatColor;
+	// final
+	finalColor = ambient + emitColor;
+	fs_pos = in_pos;
 	fs_norm = in_norm;
 	gl_Position = pMatrix * vec4(in_pos, 1.0);
 }
@@ -167,12 +183,32 @@ void main() {
 var F3 = `#version 300 es
 precision highp float;
 
+in vec4 finalColor;
+// from the fragment shader
+in vec3 fs_pos;
 in vec3 fs_norm;
+
+uniform vec4 LAlightColor;
+uniform vec4 diffuseColor;
+uniform vec4 specularColor;
+uniform float SpecShine;
+uniform vec3 eyePos;
+uniform vec3 LAPos;
 
 out vec4 color;
 
 void main() {	
-	color = vec4(fs_norm, 1.0);
+	vec3 Ldir = normalize(LAPos - fs_pos);
+	// diffuse
+	vec4 diffuse = diffuseColor * max(dot(normalize(fs_norm), Ldir), 0.0);
+	// specular
+	vec3 eyeDir = normalize(eyePos - fs_pos);
+	vec3 halfVec = normalize(eyeDir + Ldir);
+	vec4 specular = specularColor * pow(max(dot(halfVec, fs_norm),0.0),SpecShine);
+	
+	vec4 finalColor2 = clamp((diffuse + specular) * LAlightColor + finalColor, 0.0, 1.0);
+	
+	color = vec4(finalColor2.rgb, 1.0);
 }
 `;
 
@@ -193,12 +229,34 @@ var V4 = `#version 300 es
 layout(location = POSITION_LOCATION) in vec3 in_pos;
 layout(location = NORMAL_LOCATION) in vec3 in_norm;
 
-uniform mat4 pMatrix;
+// uniforms
 
+
+uniform vec4 ambientLightColor;
+uniform vec4 ambientMatColor;
+uniform vec4 diffuseColor;
+uniform vec4 emitColor;
+uniform mat4 pMatrix;
+uniform vec3 LAPos;
+
+out vec3 fs_pos;
 out vec3 fs_norm;
+out vec3 Ldir;
+out vec4 fs_emitColor;
+out vec4 ambient;
+out vec4 diffuse;
 
 void main() {
+	Ldir = normalize(LAPos - in_pos);
+	// diffuse
+	diffuse = diffuseColor * max(dot(normalize(in_norm), Ldir), 0.0);
+	// ambient
+	ambient = ambientLightColor * ambientMatColor;
+	// emit
+	fs_emitColor = emitColor;
+	fs_pos = in_pos;
 	fs_norm = in_norm;
+	
 	gl_Position = pMatrix * vec4(in_pos, 1.0);
 }
 `;
@@ -206,13 +264,31 @@ void main() {
 // Light and diffuse per vertex, specular per pixel - fragment shader -- to do
 var F4 = `#version 300 es
 precision highp float;
-
+//from vertex shader
+in vec3 Ldir;
+in vec4 fs_emitColor;
+in vec4 ambient;
+in vec4 diffuse;
+in vec4 finalColor;
+in vec3 fs_pos;
 in vec3 fs_norm;
+
+uniform vec4 LAlightColor;
+uniform vec3 LAPos;
+uniform vec4 specularColor;
+uniform float SpecShine;
+uniform vec3 eyePos;
 
 out vec4 color;
 
 void main() {	
-	color = vec4(normalize(fs_norm) / 2.0 + 0.5, 1.0);
+	// specular
+	vec3 eyeDir = normalize(eyePos - fs_pos);
+	vec3 halfVec = normalize(eyeDir + Ldir);
+	vec4 specular = specularColor * pow(max(dot(halfVec, fs_norm),0.0),SpecShine);
+	// final
+	vec4 finalColor = clamp((diffuse + specular) * LAlightColor + ambient + fs_emitColor, 0.0, 1.0);
+	color = vec4(finalColor.rgb, 1.0);
 }
 `;
 
