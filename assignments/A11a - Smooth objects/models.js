@@ -79,8 +79,8 @@ function buildGeometry() {
     ///// Creates vertices
     var vert4 = [];
     var ind4 = [];
-    var circles = 100.0;
-    var edges = 100;
+    var circles = 10.0;
+    var edges = 50;
     var ray = 1.0;
     var curr_ray = ray;
     var k = 0;
@@ -231,8 +231,8 @@ function buildGeometry() {
     let r = 0.4;
     let arc = Math.PI * 2;
     k = 0;
-    let radial = 89;
-    let tubi = 200;
+    let radial = 27;
+    let tubi = 36;
     for (j = 0; j <= radial; j++) {
         for (i = 0; i <= tubi; i++) {
 
