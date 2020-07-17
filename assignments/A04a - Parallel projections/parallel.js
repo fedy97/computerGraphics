@@ -4,7 +4,7 @@ function parallel() {
 			   0.0,		1.0,		0.0,		0.0,
 			   0.0,		0.0,		1.0,		0.0,
 			   0.0,		0.0,		0.0,		1.0];
-	out = parallelProjection(out,16/9, 40, 1, 101);
+	out = parallelProjection(out,16/9, 80, 1, 101);
 	return out;
 }
 

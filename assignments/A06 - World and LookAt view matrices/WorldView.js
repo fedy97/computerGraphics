@@ -20,25 +20,25 @@ function worldViewProjection(carx, cary, carz, cardir, camx, camy, camz) {
     var vx = utils.crossVector(upVector, normalizedVz);
     var normalizedVx = utils.normalizeVector3(vx);
     var normalizedVy = utils.crossVector(normalizedVz, normalizedVx);
-    var rc =
-        [normalizedVx[0], normalizedVx[1], normalizedVx[2], normalizedVy[0],
-            normalizedVy[1], normalizedVy[2], normalizedVz[0],
-            normalizedVz[1], normalizedVz[2]];
+    var rc_t =
+        [normalizedVx[0], normalizedVx[1], normalizedVx[2],
+            normalizedVy[0], normalizedVy[1], normalizedVy[2],
+            normalizedVz[0], normalizedVz[1], normalizedVz[2]];
     var view = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    view[0] = normalizedVx[0];
-    view[1] = normalizedVx[1];
-    view[2] = normalizedVx[2];
-    view[4] = normalizedVy[0];
-    view[5] = normalizedVy[1];
-    view[6] = normalizedVy[2];
-    view[8] = normalizedVz[0];
-    view[9] = normalizedVz[1];
-    view[10] = normalizedVz[2];
+    view[0] = rc_t[0];
+    view[1] = rc_t[1];
+    view[2] = rc_t[2];
+    view[4] = rc_t[3];
+    view[5] = rc_t[4];
+    view[6] = rc_t[5];
+    view[8] = rc_t[6];
+    view[9] = rc_t[7];
+    view[10] = rc_t[8];
     var prod = [];
-    prod[0] = vectorCam[0]*rc[0]+vectorCam[1]*rc[1]+vectorCam[2]*rc[2];
-    prod[1] = vectorCam[0]*rc[3]+vectorCam[1]*rc[4]+vectorCam[2]*rc[5];
-    prod[2] = vectorCam[0]*rc[6]+vectorCam[1]*rc[7]+vectorCam[2]*rc[8];
-    console.log(prod);
+    prod[0] = vectorCam[0]*rc_t[0]+vectorCam[1]*rc_t[1]+vectorCam[2]*rc_t[2];
+    prod[1] = vectorCam[0]*rc_t[3]+vectorCam[1]*rc_t[4]+vectorCam[2]*rc_t[5];
+    prod[2] = vectorCam[0]*rc_t[6]+vectorCam[1]*rc_t[7]+vectorCam[2]*rc_t[8];
+    //console.log(prod);
     view[3] = -prod[0];
     view[7] = -prod[1];
     view[11] = -prod[2];

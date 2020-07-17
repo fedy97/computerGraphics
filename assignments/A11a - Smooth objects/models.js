@@ -109,10 +109,6 @@ function buildGeometry() {
 
     for (j = 1; j <= circles; j++) {
         for (i = 1; i <= edges; i++) {
-            /*var a = (tubi + 1) * j + i - 1;
-            var b = (tubi + 1) * (j - 1) + i - 1;
-            var c = (tubi + 1) * (j - 1) + i;
-            var d = (tubi + 1) * j + i;*/
             var a = edges * j + i - 1; //36 - 37 --- 71
             var b = edges * (j - 1) + i - 1; //0 - 1 --- 35
             var c = edges * (j - 1) + i; //1 - 2 --- 36
@@ -128,49 +124,7 @@ function buildGeometry() {
     for (i = 0; i < edges - 1; i++)
         ind4.push(i % edges + l + 2, i + l + 1, l);
     ind4.push(l+1,l+edges,l);
-    /*
-    for (i = 0; i < 36; i++) {
-        var normm1 = [Math.sin(i * 10.0 / 180.0 * Math.PI), 1.0 / 2.0, Math.cos(i * 10.0 / 180.0 * Math.PI)];
-        var abbs = Math.sqrt(Math.pow(normm1[0], 2) + Math.pow(normm1[1], 2) + Math.pow(normm1[2], 2));
-        norm4[i] = [normm1[0], normm1[1], normm1[2]];
-        vert4[i] = [Math.sin(i * 10.0 / 180.0 * Math.PI), -1.0, Math.cos(i * 10.0 / 180.0 * Math.PI)];
-    }
-    vert4[36] = [0.0, -1.0, 0.0];
-    norm4[36] = [0.0, -1.0, 0.0];
-    //corona
-    for (i = 37; i < 73; i++) {
-        var normm2 = [Math.sin((i - 37) * 10.0 / 180.0 * Math.PI), 1.0 / 2.0, Math.cos((i - 37) * 10.0 / 180.0 * Math.PI)];
-        var abbs2 = Math.sqrt(Math.pow(normm2[0], 2) + Math.pow(normm2[1], 2) + Math.pow(normm2[2], 2));
-        norm4[i] = [0.0,1.0,0.0];
-        vert4[i] = [0.0, 1.0, 0.0];
-    }
-    //base verso il giu
-    for (i = 73; i < 109; i++) {
-        norm4[i] = [0.0, -1.0, 0.0];
-        vert4[i] = [Math.sin((i - 73) * 10.0 / 180.0 * Math.PI), -1.0, Math.cos((i - 73) * 10.0 / 180.0 * Math.PI)];
-    }
-    ////// Creates indices
-    var ind4 = [];
-    //////// Upper part
-    var j = 0;
-    for (i = 0; i < 35; i++) {
-        ind4[j++] = i + 37;
-        ind4[j++] = i;
-        ind4[j++] = (i) % 36 + 1;
-    }
-    ind4[j++] = 72;
-    ind4[j++] = 35;
-    ind4[j++] = 0;
-    //////// Lower part
-    for (i = 0; i < 35; i++) {
-        ind4[j++] = (i) % 36 + 74;
-        ind4[j++] = i + 73;
-        ind4[j++] = 36;
-    }
-    ind4[j++] = 73;
-    ind4[j++] = 108;
-    ind4[j++] = 36;
-    */
+
     var color4 = [1.0, 1.0, 0.0];
     addMesh(vert4, norm4, ind4, color4);
 

@@ -45,7 +45,8 @@ function cavalier(degZ, w, a, n, f) {
 }
 
 function cabinet(degZ, w, a, n, f) {
+    var p = 0.5;
     var parallel = utils.MakeParallel(w, a, n, f);
-    var shearZ = utils.MakeShearZMatrix(-0.5 * Math.cos(utils.degToRad(degZ)), -0.5 * Math.sin(utils.degToRad(degZ)));
+    var shearZ = utils.MakeShearZMatrix(-p * Math.cos(utils.degToRad(degZ)), -p * Math.sin(utils.degToRad(degZ)));
     return utils.multiplyMatrices(parallel, shearZ);
 }

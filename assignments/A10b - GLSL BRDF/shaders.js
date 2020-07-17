@@ -55,20 +55,15 @@ var S2 = `
 
 // No diffuse, ambient and Blinn specular
 var S3 = `
-	vec4 ambientt = ambientLight * ambColor;
+	vec4 ambLight = ambientLight * ambColor;
 	vec4 sLAcontr = pow(clamp(dot(normalize(eyedirVec+lightDirA), normalVec),0.0,1.0), SpecShine) * lightColorA;
 	vec4 sLBcontr = pow(clamp(dot(normalize(eyedirVec+lightDirB), normalVec),0.0,1.0), SpecShine) * lightColorB;
 	vec4 sLCcontr = pow(clamp(dot(normalize(eyedirVec+lightDirC), normalVec),0.0,1.0), SpecShine) * lightColorC;
 	vec4 blinn_specular = specularColor * (sLAcontr + sLBcontr + sLCcontr);
-	out_color = clamp(blinn_specular + ambientt, 0.0, 1.0);
+	out_color = clamp(blinn_specular + ambLight, 0.0, 1.0);
 `;
 
 // Diffuse and Phong specular
-
-	/*
-
-
-	 */
 var S4 = `
 	vec4 dLAcontr = clamp(dot(lightDirA, normalVec),0.0,1.0) * lightColorA;
 	vec4 dLBcontr = clamp(dot(lightDirB, normalVec),0.0,1.0) * lightColorB;
@@ -99,13 +94,13 @@ var S5 = `
 	vec4 sLBcontr2 = pow(clamp(dot(eyedirVec, rB),0.0,1.0), SpecShine) * lightColorB;
 	vec4 sLCcontr2 = pow(clamp(dot(eyedirVec, rC),0.0,1.0), SpecShine) * lightColorC;
 	vec4 phong_specular = specularColor * (sLAcontr2 + sLBcontr2 + sLCcontr2);
-	vec4 ambientt = ambientLight * ambColor;
-	out_color = clamp(diffuse + phong_specular + ambientt + emit, 0.0, 1.0);
+	vec4 ambLight = ambientLight * ambColor;
+	out_color = clamp(diffuse + phong_specular + ambLight + emit, 0.0, 1.0);
 `;
 
 // Ambient + Oren-Nayar with roughness sigma=0.5 (consider only Light A)
 var S6 = `
-	vec4 ambientt = ambientLight * ambColor;
+	vec4 ambLight = ambientLight * ambColor;
 	vec4 L = diffColor * clamp(dot(lightDirA, normalVec), 0.0, 1.0);
 	float A = 1.0 - 0.5*(pow(0.5,2.0) / pow(0.5,2.0) + 0.33);
 	float B = 0.45*(pow(0.5,2.0) / pow(0.5,2.0) + 0.09);
@@ -117,7 +112,7 @@ var S6 = `
 	float alfa = max(tetai, tetar);
 	float beta = min(tetai, tetar);
 	vec4 oren = L*(A+B*G*sin(alfa)*tan(beta));
-	out_color = clamp(ambientt + oren, 0.0, 1.0);
+	out_color = clamp(ambLight + oren, 0.0, 1.0);
 `;
 
 	return [S1, S2, S3, S4, S5, S6];

@@ -10,7 +10,7 @@ function move() {
 			0.0, 1.0, 0.0, 0.0,
 			0.0, 0.0, 1.0, 0.0,
 			0.0, 0.0, 0.0, 1.0];
-	R1 = rotateX(R1, (45*2*3.14)/360);
+	R1 = rotateX(R1, 45);
     // Make the object 2 times smaller
     let S1 = [1.0, 0.0, 0.0, 0.0,
 			0.0, 1.0, 0.0, 0.0,
@@ -52,10 +52,11 @@ function translate(matrix, x, y, z) {
 }
 
 function rotateX(matrix, degree) {
-	matrix[5] = Math.cos(degree);
-	matrix[6] = -Math.sin(degree);
-	matrix[9] = Math.sin(degree);
-	matrix[10] = Math.cos(degree);
+	let rad = (degree*2*3.14)/360;
+	matrix[5] = Math.cos(rad);
+	matrix[6] = -Math.sin(rad);
+	matrix[9] = Math.sin(rad);
+	matrix[10] = Math.cos(rad);
 	return matrix;
 }
 
@@ -71,15 +72,27 @@ function mirrorAxis(matrix, axis) {
 		matrix[0] = -1.0;
 		matrix[5] = -1.0;
 	}
+	else if (axis === 'y') {
+		matrix[0] = -1.0;
+		matrix[10] = -1.0;
+	}
+	else if (axis === 'x') {
+		matrix[5] = -1.0;
+		matrix[10] = -1.0;
+	}
 	return matrix;
-	//TODO finish the function
 }
 
 function flatten(matrix, axis) {
 	if (axis === 'z') {
 		matrix[10] = 0.0;
 	}
-	//TODO
+	else if (axis === 'x') {
+		matrix[0] = 0.0;
+	}
+	else if (axis === 'y') {
+		matrix[5] = 0.0;
+	}
 	return matrix;
 }
 
@@ -88,7 +101,14 @@ function shear(matrix, axis, h1, h2) {
 		matrix[1] = h1;
 		matrix[9] = h2;
 	}
-	//TODO
+	else if (axis === 'x') {
+		matrix[4] = h1;
+		matrix[8] = h2;
+	}
+	else if (axis === 'z') {
+		matrix[2] = h1;
+		matrix[6] = h2;
+	}
 	return matrix;
 }
 

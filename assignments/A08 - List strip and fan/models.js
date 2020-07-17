@@ -1,6 +1,4 @@
 function buildGeometry() {
-    var i;
-
     // Draws a cube (replace the vertices)
     //if Y stays at 0, the figure is hidden because has no height
     var vert1 = [[0.0, 0.0, 1.0], [0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 0.0], [1, 1, 1], [1, 1, 0],
